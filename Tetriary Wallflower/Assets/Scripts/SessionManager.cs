@@ -8,10 +8,13 @@ public static class SessionManager
 {
     static WirelessClient client;
 
-    static ClientWorld world;
+    public static ClientWorld world;
+
+    public const float defaultTileScale = 0.1f;
 
     public static void Initialize()
     {
+        ImageLibrary.LoadImageLibraries();
         client = new WirelessClient();
         client.serverEndpoint = new IPEndPoint(IPAddress.Loopback, 44500);
         client.Initialize();
