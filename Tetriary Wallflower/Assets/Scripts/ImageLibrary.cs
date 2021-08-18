@@ -100,7 +100,7 @@ public static class ImageLibrary
         int yMax = targetTex.height / entitySpriteY;
         for (int y = 0; (y + 1) * entitySpriteY <= targetTex.height; y++)
         {
-            for (int x = 0; (x + 1) * entitySpriteY <= targetTex.width; x++)
+            for (int x = 0; (x + 1) * entitySpriteX <= targetTex.width; x++)
             {
                 int number = (yMax - (y + 1)) * numberOfTilesInXDirection + x;
                 Color[] col = targetTex.GetPixels(x * entitySpriteX, y * entitySpriteY, entitySpriteX, entitySpriteY, 0);

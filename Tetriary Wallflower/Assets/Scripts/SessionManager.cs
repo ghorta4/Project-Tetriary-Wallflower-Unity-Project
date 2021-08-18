@@ -14,7 +14,6 @@ public static class SessionManager
 
     public static void Initialize()
     {
-        ImageLibrary.LoadImageLibraries();
         client = new WirelessClient();
         client.serverEndpoint = new IPEndPoint(IPAddress.Loopback, 44500);
         client.Initialize();
@@ -23,6 +22,9 @@ public static class SessionManager
         world = new ClientWorld();
         world.Initialize();
 
+        FileAccess.SetDefaultDirectory(FileAccess.LocalFilesLocation);
+
+        ImageLibrary.LoadImageLibraries();
         ErrorHandler.PrintErrorLog();
     }
 
