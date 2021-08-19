@@ -18,9 +18,9 @@
 				"CanUseSpriteAtlas" = "True"
 			}
 
-			Cull Off
+		//	Cull Off
 			Lighting Off
-			ZWrite Off
+			//ZWrite Off
 			Blend One OneMinusSrcAlpha
 
 			Pass

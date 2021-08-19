@@ -51,7 +51,6 @@ public class WirelessClient : WirelessCommunicator
         {
             return;
         }
-        Debug.Log("Packet of type "+ dp.stowedPacketType);
         switch (dp.stowedPacketType)
         {
             case PacketType.heartbeatPing:
