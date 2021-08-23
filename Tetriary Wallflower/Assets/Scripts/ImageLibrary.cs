@@ -12,7 +12,7 @@ public static class ImageLibrary
     public static Texture2D loadedTilemap;
     public static Material tilemapMaterial;
     public static Dictionary<string, Vector2[]> translateTileNameToPositionOnTilemap = new Dictionary<string, Vector2[]> { };
-    public static Dictionary<string, Texture2D> pokemonSprites = new Dictionary<string, Texture2D> { };
+    public static Dictionary<string, Texture2D> EntitySprites = new Dictionary<string, Texture2D> { };
 
     public static void LoadImageLibraries()
     {
@@ -76,7 +76,6 @@ public static class ImageLibrary
         }
     }
 
-    const string pokemonSpritesLocation = "Pokemon Sprites";
     public const int entitySpriteX = 40, entitySpriteY = 30;
     static void LoadSpriteLibrary()
     {
@@ -109,7 +108,7 @@ public static class ImageLibrary
                 Texture2D newPokemonTex = new Texture2D(entitySpriteX, entitySpriteY);
                 newPokemonTex.filterMode = FilterMode.Point;
                 newPokemonTex.SetPixels(col);
-                pokemonSprites.Add(name, newPokemonTex);
+                EntitySprites.Add(name, newPokemonTex);
                 newPokemonTex.Apply();
             }
         }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Net;
+using System;
 using Guildleader;
 
 public static class SessionManager
@@ -19,7 +20,6 @@ public static class SessionManager
         client = new WirelessClient();
         client.serverEndpoint = new IPEndPoint(IPAddress.Loopback, 44500);
         client.Initialize();
-        client.StartListeningThread();
 
         WorldManager.currentWorld = new ClientWorld();
         (WorldManager.currentWorld as ClientWorld).Initialize();
@@ -32,21 +32,20 @@ public static class SessionManager
         m3r = VoxelRenderer3d.grabVRenderer();
         m3r.RefreshEntireMap();
 
-        world.LoadNearbyChunkData(Int3.Zero, 2);
-
         ErrorHandler.PrintErrorLog();
     }
 
     public static void Update()
     {
-        client.Update();
-        bool buttonPressed = Input.GetKey("h");
-        if (buttonPressed)
+        while (ErrorHandler.messageLog.Count > 0)
         {
-            world.UnloadDistantChunkData(new Int3(10,10,10), 0);
-            world.LoadNearbyChunkData(Int3.Zero, 1);
-            Debug.Log("pressed");
+            Debug.Log(ErrorHandler.messageLog[0]);
+            ErrorHandler.messageLog.RemoveAt(0);
         }
+
+        client.Update();
+
         m3r.RefreshEntireMap();
+        EntitySpriteManager.Update();
     }
 }

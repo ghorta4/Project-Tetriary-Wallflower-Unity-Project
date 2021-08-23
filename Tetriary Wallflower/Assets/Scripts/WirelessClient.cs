@@ -58,6 +58,12 @@ public class WirelessClient : WirelessCommunicator
             case PacketType.largeObjectPacket:
                 lobh.RecieveSegments("SLP", dp.contents); //SLP Stands for Server Large Packet
                 break;
+            case PacketType.chunkInfo:
+                SessionManager.world?.ProcessChunkBytes(dp.contents);
+                break;
+            case PacketType.nearbyEntityInfo:
+                SessionManager.world?.ProcessEntityBytes(dp.contents);
+                break;
             default:
                 Debug.Log(new Exception("Unhandled packet type: " + dp.stowedPacketType));
                 break;
