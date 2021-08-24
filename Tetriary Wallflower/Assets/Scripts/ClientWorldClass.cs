@@ -4,6 +4,7 @@ using UnityEngine;
 using Guildleader;
 using Guildleader.Entities;
 using Guildleader.Entities.BasicEntities;
+using System.Linq;
 
 public class ClientWorld : WorldDataStorageModuleGeneric
 {
@@ -41,7 +42,35 @@ public class ClientWorld : WorldDataStorageModuleGeneric
         {
             allChunks[pos.x].Add(pos.y, new Dictionary<int, Chunk>());
         }
+        if (allChunks[pos.x][pos.y].ContainsKey(pos.z))
+        {
+            SingleWorldTile[,,] tilesOld = allChunks[pos.x][pos.y][pos.z].tiles;
+            SingleWorldTile[,,] tilesNew = c.tiles;
+            bool tilesAreTheSame = true;
+
+            for (int i = 0; i < tilesOld.GetLength(0); i++)
+            {
+                for (int j = 0; j < tilesOld.GetLength(1); j++)
+                {
+                    for (int k = 0; k < tilesOld.GetLength(2); k++)
+                    {
+                        if (tilesOld[i,j,k].tileID != tilesNew[i,j,k].tileID)
+                        {
+                            tilesAreTheSame = false;
+                            goto escapeLoop;
+                        }
+                    }
+                }
+            }
+            escapeLoop:;
+            if (tilesAreTheSame)
+            {
+                return;
+            }
+        }
         allChunks[pos.x][pos.y][pos.z] = c;
+
+        ChunkRenderManager.RendererRequiresUpdates = true;
     }
 
     public void ProcessEntityBytes(byte[] data)

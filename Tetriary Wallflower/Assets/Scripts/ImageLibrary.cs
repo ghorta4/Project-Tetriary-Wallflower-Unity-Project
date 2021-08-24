@@ -6,7 +6,6 @@ using System.IO;
 
 public static class ImageLibrary
 {
-    public const float tileScale = 0.1f;
 
     const int compiledTileMapsDesiredWidth = 50, compiledTileMapsDesiredHeight = 50; //in tiles
     public static Texture2D loadedTilemap;

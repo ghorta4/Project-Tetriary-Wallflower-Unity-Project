@@ -9,7 +9,7 @@ public class VoxelRenderer3d
     public Mesh ownMesh;
     //public Vector3Int pos; //upper left of the map
     // public Vector3Int size;
-    public Vector3Int targetChunk;
+    public Int3 targetChunk;
 
     public GameObject thisObject;
     public MeshRenderer mr;
@@ -17,7 +17,8 @@ public class VoxelRenderer3d
 
     List<Vector3> vertices; List<int> triangles; List<Vector2> UVs; List<Color> vertColors;
 
-    const float sca = 1;//ImageLibrary.tileScale;
+    const float sca = SessionManager.unitScaling;
+    const float zSca = SessionManager.zScaleStretch;
 
     const int expectedBlocksToStore = Chunk.defaultx * Chunk.defaulty * Chunk.defaultz;
 
@@ -26,7 +27,7 @@ public class VoxelRenderer3d
 
     }
 
-    public static VoxelRenderer3d grabVRenderer()
+    public static VoxelRenderer3d GrabVRenderer()
     {
         if (recycling.Count > 0)
         {
@@ -56,8 +57,6 @@ public class VoxelRenderer3d
         mr.material.SetFloat("PixelSnap", 1);
 
         mf.mesh = ownMesh;
-
-        //refreshEntireMap();
     }
 
     public void RefreshEntireMap()

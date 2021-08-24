@@ -17,7 +17,7 @@ public class MapPlane
     public bool requiresRefreshDueToMissingBlock;
     public DateTime lastRefreshRequest;
 
-    const float sca = ImageLibrary.tileScale;
+    const float sca = SessionManager.unitScaling;
     //  List<Vector2> storedVerts;
     public List<List<Vector2>> storedVerts2D = new List<List<Vector2>>();
 

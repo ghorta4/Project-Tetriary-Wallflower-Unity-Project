@@ -7,13 +7,12 @@ using Guildleader;
 
 public static class SessionManager
 {
+    public const float unitScaling = 1;
+    public const float zScaleStretch = 1;
+
     static WirelessClient client;
 
-    public const float defaultTileScale = 0.1f;
-
     public static ClientWorld world { get { return WorldManager.currentWorld as ClientWorld; } }
-
-    static VoxelRenderer3d m3r;
 
     public static void Initialize()
     {
@@ -29,9 +28,6 @@ public static class SessionManager
         ImageLibrary.LoadImageLibraries();
         TileLibrary.LoadTileLibrary();
 
-        m3r = VoxelRenderer3d.grabVRenderer();
-        m3r.RefreshEntireMap();
-
         ErrorHandler.PrintErrorLog();
     }
 
@@ -45,7 +41,8 @@ public static class SessionManager
 
         client.Update();
 
-        m3r.RefreshEntireMap();
+        ChunkRenderManager.Update();
+
         EntitySpriteManager.Update();
     }
 }

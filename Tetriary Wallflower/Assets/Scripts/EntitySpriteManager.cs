@@ -23,8 +23,10 @@ public static class EntitySpriteManager
             }
             else
             {
-                DrawingNodes.Add(kvp.Key, new EntityDrawingNode(kvp.Value));
+                node = new EntityDrawingNode(kvp.Value);
+                DrawingNodes.Add(kvp.Key, node);
             }
+            node.UpdateWorldPosition();
         }
         //and, finally, remove irrelevant ones
         foreach (int i in DrawingNodesToRemove)
@@ -57,6 +59,11 @@ public class EntityDrawingNode
             Texture2D tex = ImageLibrary.EntitySprites[ent.stringRetrievedFromServer];
             currentSpriteObjectForEntity.sprite = Sprite.Create(tex, new Rect(0,0,tex.width, tex.height), Vector2.one * 0.5f);
         }
+    }
+
+    public void UpdateWorldPosition()
+    {
+        currentSpriteObjectForEntity.transform.position = new Vector3(currentPosition.x * SessionManager.unitScaling, currentPosition.y * SessionManager.unitScaling, currentPosition.z * SessionManager.unitScaling * SessionManager.zScaleStretch) + Vector3.one * 0.5f * SessionManager.unitScaling;
     }
 
     public void Cleanup()
