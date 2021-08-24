@@ -41,7 +41,10 @@ public class WirelessClient : WirelessCommunicator
     public override void RecievePacket(IPAddress address, int port, byte[] data)
     {
         DataPacket dp = DataPacket.GetDataPacket(address, port, data, dataSequencingDictionary);
-        packets.Enqueue(dp);
+        if (dp != null)
+        {
+            packets.Enqueue(dp);
+        }
     }
 
     public void ProcessLatestPacket()
