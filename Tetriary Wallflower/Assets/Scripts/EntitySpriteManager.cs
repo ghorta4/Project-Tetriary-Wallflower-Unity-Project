@@ -8,8 +8,8 @@ using Guildleader.Entities.BasicEntities;
 public static class EntitySpriteManager
 {
     static Dictionary<int, PhysicalObject> Entities { get { return (WorldManager.currentWorld as ClientWorld).locallyLoadedEntities;  } }
-    static Dictionary<int, EntityDrawingNode> DrawingNodes = new Dictionary<int, EntityDrawingNode>();
-    public static void Update()
+    public static Dictionary<int, EntityDrawingNode> DrawingNodes = new Dictionary<int, EntityDrawingNode>();
+    public static void Update(float timestep)
     {
         List<int> DrawingNodesToRemove = new List<int>(DrawingNodes.Keys);
         //first, create new nodes AND update current ones in one go
@@ -26,7 +26,7 @@ public static class EntitySpriteManager
                 node = new EntityDrawingNode(kvp.Value);
                 DrawingNodes.Add(kvp.Key, node);
             }
-            node.UpdateWorldPosition();
+            node.UpdateWorldPosition(timestep);
         }
         //and, finally, remove irrelevant ones
         foreach (int i in DrawingNodesToRemove)
@@ -40,19 +40,24 @@ public static class EntitySpriteManager
 public class EntityDrawingNode
 {
     public SpriteRenderer currentSpriteObjectForEntity;
-    public Int3 positionLastDrawnAt, currentPosition;
+    public Int3 positionLastDrawnAt, targetPosition;
     float positionTweenFraction; //from 1 to 0; 0 is its new positon, 1 is its old one
     string oldSpriteName;
 
     public EntityDrawingNode(PhysicalObject owner)
     {
-        positionLastDrawnAt = currentPosition = owner.worldPositon;
+        positionLastDrawnAt = targetPosition = owner.worldPositon;
         currentSpriteObjectForEntity = SpriteBatcher.TakeSpriteObject().GetComponent<SpriteRenderer>();
     }
 
     public void UpdateFromEntity(PhysicalObject ent)
     {
-        currentPosition = positionLastDrawnAt = ent.worldPositon;
+        if (ent.worldPositon != targetPosition)
+        {
+            positionLastDrawnAt = targetPosition;
+            targetPosition = ent.worldPositon;
+            positionTweenFraction = 1;
+        }
         if (oldSpriteName != ent.stringRetrievedFromServer)
         {
             oldSpriteName = ent.stringRetrievedFromServer;
@@ -61,9 +66,13 @@ public class EntityDrawingNode
         }
     }
 
-    public void UpdateWorldPosition()
+    public void UpdateWorldPosition(float timeStep)
     {
-        currentSpriteObjectForEntity.transform.position = new Vector3(currentPosition.x * SessionManager.unitScaling, currentPosition.y * SessionManager.unitScaling, currentPosition.z * SessionManager.unitScaling * SessionManager.zScaleStretch) + Vector3.one * 0.5f * SessionManager.unitScaling;
+        positionTweenFraction = Mathf.Max(0, positionTweenFraction - timeStep * 6);
+        Vector3 start = new Vector3(positionLastDrawnAt.x, positionLastDrawnAt.y, positionLastDrawnAt.z);
+        Vector3 end = new Vector3(targetPosition.x, targetPosition.y, targetPosition.z);
+        Vector3 offset = Vector3.one * 0.5f;
+        currentSpriteObjectForEntity.transform.position = (start * positionTweenFraction + end * (1 - positionTweenFraction) + offset) * SessionManager.unitScaling;
     }
 
     public void Cleanup()

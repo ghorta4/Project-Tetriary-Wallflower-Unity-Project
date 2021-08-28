@@ -67,6 +67,9 @@ public class WirelessClient : WirelessCommunicator
             case PacketType.nearbyEntityInfo:
                 SessionManager.world?.ProcessEntityBytes(dp.contents);
                 break;
+            case PacketType.entityIDToTrack:
+                SessionManager.world?.ProcessToTrackBytes(dp.contents);
+                break;
             default:
                 Debug.Log(new Exception("Unhandled packet type: " + dp.stowedPacketType));
                 break;
