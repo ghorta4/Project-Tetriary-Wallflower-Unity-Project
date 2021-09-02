@@ -24,17 +24,21 @@ public class WirelessClient : WirelessCommunicator
         StartListeningThread();
     }
 
-    public void Update()
+    DateTime lastHeartbeatSent= DateTime.Now;
+
+    public void UpdateMainThread()
     {
         SendHeartbeat();
-
         LargeObjectByteHandlerUpdate();
+        CheckForServerConnection();
+    }
+    public void UpdateSideThread()
+    {
+
         while (packets.Count > 0)
         {
             ProcessLatestPacket();
         }
-
-        CheckForServerConnection();
 
     }
 

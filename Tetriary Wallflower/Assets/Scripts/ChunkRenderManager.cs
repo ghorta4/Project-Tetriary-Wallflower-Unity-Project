@@ -10,7 +10,7 @@ using System;
 public static class ChunkRenderManager
 {
     public static bool RendererRequiresUpdates;
-    static List<VoxelRenderer3d> RenderChunks = new List<VoxelRenderer3d>();
+    static List<MapChunkRenderer> RenderChunks = new List<MapChunkRenderer>();
 
     const float sca = SessionManager.unitScaling;
 
@@ -44,7 +44,7 @@ public static class ChunkRenderManager
         {
             if (RenderChunks.Find(x => x.targetChunk == c.chunkPos) == null)
             {
-                VoxelRenderer3d newChunk = VoxelRenderer3d.GrabVRenderer(c.chunkPos);
+                MapChunkRenderer newChunk = MapChunkRenderer.GrabMapRenderer(c.chunkPos);
                 Int3 pos = c.chunkPos;
                 newChunk.thisObject.transform.position = new Vector3(pos.x * sca * Chunk.defaultx, pos.y * sca * Chunk.defaulty, pos.z * sca * Chunk.defaultz * SessionManager.zScaleStretch);
                 RenderChunks.Add(newChunk);
@@ -56,8 +56,8 @@ public static class ChunkRenderManager
     }
     public static void UpdateAllChunks()
     {
-        List<VoxelRenderer3d> clonedProcessingChunks = new List<VoxelRenderer3d>(RenderChunks);
-        foreach (VoxelRenderer3d vr3d in clonedProcessingChunks)
+        List<MapChunkRenderer> clonedProcessingChunks = new List<MapChunkRenderer>(RenderChunks);
+        foreach (MapChunkRenderer vr3d in clonedProcessingChunks)
         {
             try
             {
@@ -83,8 +83,8 @@ public static class ChunkRenderManager
     {
         SessionManager.world.UnloadDistantChunkData(WorldDataStorageModuleGeneric.GetChunkPositionBasedOnTilePosition(playerPos.x, playerPos.y, playerPos.z), 2);
         List<Chunk> allChunksLoaded = SessionManager.world.GetAllChunksLoaded();
-        List<VoxelRenderer3d> toRemove = new List<VoxelRenderer3d>();
-        foreach (VoxelRenderer3d vox in RenderChunks)
+        List<MapChunkRenderer> toRemove = new List<MapChunkRenderer>();
+        foreach (MapChunkRenderer vox in RenderChunks)
         {
             if (vox.beingUpdated || vox.needsMeshPushed)
             {
@@ -97,20 +97,21 @@ public static class ChunkRenderManager
                 toRemove.Add(vox);
             }
         }
-        foreach (VoxelRenderer3d vox in toRemove)
+        foreach (MapChunkRenderer vox in toRemove)
         {
             RenderChunks.Remove(vox);
         }
     }
     static void PushFinishedChunks()
     {
-        foreach (VoxelRenderer3d Renderer in RenderChunks)
+        foreach (MapChunkRenderer Renderer in RenderChunks)
         {
             Renderer.isBeingMeshPushed = true;
             if (Renderer.needsMeshPushed)
             {
                 Renderer.PushMesh();
                 Renderer.needsMeshPushed = false;
+                Renderer.isBeingMeshPushed = false;
             }
             Renderer.isBeingMeshPushed = false;
         }
@@ -123,7 +124,7 @@ public static class ChunkRenderManager
             if (!RendererRequiresUpdates)
             {
                 Thread.Sleep(250);
-            //    continue;
+                continue;
             }
             RendererRequiresUpdates = false;
             UpdateAllChunks();

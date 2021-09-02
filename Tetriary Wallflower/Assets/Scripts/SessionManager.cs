@@ -5,6 +5,7 @@ using System.Net;
 using System;
 using Guildleader;
 using Guildleader.Entities;
+using System.Threading;
 
 public static class SessionManager
 {
@@ -17,11 +18,16 @@ public static class SessionManager
 
     public static bool QuitApplication;
 
+    static Thread clientThread;
+
     public static void Initialize()
     {
         client = new WirelessClient();
         client.serverEndpoint = new IPEndPoint(IPAddress.Loopback, 44500);
         client.Initialize();
+
+        clientThread = new Thread(ClientUpdateThread);
+        clientThread.Start();
 
         WorldManager.currentWorld = new ClientWorld();
         (WorldManager.currentWorld as ClientWorld).Initialize();
@@ -38,13 +44,14 @@ public static class SessionManager
 
     public static void Update(float timestep)
     {
-        client.Update();
 
         ChunkRenderManager.Update();
 
         EntitySpriteManager.Update(timestep);
 
         world.Update();
+
+        client.UpdateMainThread();
 
         int x = 0, y = 0, z = 0; //test values. delete later
         if (Input.GetKeyDown("d"))
@@ -78,6 +85,14 @@ public static class SessionManager
             packet.AddRange(Guildleader.Convert.ToByte(y));
             packet.AddRange(Guildleader.Convert.ToByte(z));
             client.SendMessageToServer(packet.ToArray(),WirelessCommunicator.PacketType.debugCommands, 3);
+        }
+    }
+
+    static void ClientUpdateThread() //to help with the bottleneck of client processing chunk data
+    {
+        while (!QuitApplication)
+        {
+            client.UpdateSideThread();
         }
     }
 }
