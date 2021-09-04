@@ -312,7 +312,7 @@ public class FFXRenderer : VoxelRenderer3D
 {
     public Int3 cornerPosition;
 
-    Color32[,,] colorMap; //controlls color and opacity (a channel). a of 0 is transparent and not given a cube shape.
+    public Color32[,,] colorMap; //controlls color and opacity (a channel). a of 0 is transparent and not given a cube shape.
 
     public FFXRenderer()
     {
@@ -401,5 +401,10 @@ public class FFXRenderer : VoxelRenderer3D
         {
             vertColors.Add(blockColor);
         }
+    }
+
+    public void PushColorMap(Color32[,,] map)
+    {
+        colorMap = map;
     }
 }
